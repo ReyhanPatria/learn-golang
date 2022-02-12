@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	message, err := module.GenerateHelloMessage(" ")
+	message, err := module.GenerateHelloMessage("Reyhan")
 
 	if err != nil {
 		log.Fatal(err)
