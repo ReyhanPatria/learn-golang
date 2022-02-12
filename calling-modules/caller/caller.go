@@ -7,11 +7,13 @@ import (
 )
 
 func main() {
-	message, err := module.GenerateHelloMessage("Reyhan")
+	messages, err := module.GenerateMultipleHelloMessage([]string{"John", "Jeremy", "Steve"})
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(message)
+	for name, message := range messages {
+		fmt.Println(name + ": " + message)
+	}
 }

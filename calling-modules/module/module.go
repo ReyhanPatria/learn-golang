@@ -22,6 +22,22 @@ func GenerateHelloMessage(name string) (string, error) {
 	return fmt.Sprintf(format, name), nil
 }
 
+func GenerateMultipleHelloMessage(names []string) (map[string]string, error) {
+	messages := make(map[string]string)
+
+	for _, name := range names {
+		message, err := GenerateHelloMessage(name)
+
+		if err != nil {
+			return nil, err
+		}
+
+		messages[name] = message
+	}
+
+	return messages, nil
+}
+
 func randomHelloFormat() string {
 	formats := []string{
 		"Hello %s!",
