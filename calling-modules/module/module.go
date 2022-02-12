@@ -2,6 +2,6 @@ package module
 
 import "fmt"
 
-func Hello(name string) string {
+func GenerateHelloMessage(name string) string {
 	return fmt.Sprintf("Hello %s!", name)
 }
