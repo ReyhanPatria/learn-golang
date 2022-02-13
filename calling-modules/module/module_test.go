@@ -35,7 +35,7 @@ func TestGenerateHelloMessage_ShouldFail_WhenNameIsBlank(t *testing.T) {
 	}
 }
 
-func TestGenerateMultipleHelloMessage_ShouldSucced_WhenAllNamesIsNotBlank(t *testing.T) {
+func TestGenerateMultipleHelloMessage_ShouldSucceed_WhenAllNamesIsNotBlank(t *testing.T) {
 	// given
 	names := []string{
 		"Steve",
@@ -53,5 +53,22 @@ func TestGenerateMultipleHelloMessage_ShouldSucced_WhenAllNamesIsNotBlank(t *tes
 		if !expected.MatchString(message) || err != nil {
 			t.Fatalf("GenerateMultipleHelloMessage(%s) failed with error '%s'", names, err)
 		}
+	}
+}
+
+func TestGenerateMultipleHelloMessage_ShouldFail_WhenAnyNamesIsBlank(t *testing.T) {
+	// given
+	names := []string{
+		"Steve",
+		"",
+		"Kevin",
+	}
+
+	// when
+	_, err := GenerateMultipleHelloMessage(names)
+
+	// then
+	if err == nil {
+		t.Fatalf("GenerateMultipleHelloMessage(%s) failed with error '%s'", names, err)
 	}
 }
