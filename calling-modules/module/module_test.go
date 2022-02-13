@@ -34,3 +34,24 @@ func TestGenerateHelloMessage_ShouldFail_WhenNameIsBlank(t *testing.T) {
 		t.Fatalf("GenerateHelloMessage(%s) failed with error '%s'", name, err)
 	}
 }
+
+func TestGenerateMultipleHelloMessage_ShouldSucced_WhenAllNamesIsNotBlank(t *testing.T) {
+	// given
+	names := []string{
+		"Steve",
+		"Johnson",
+		"Kevin",
+	}
+
+	// when
+	messages, err := GenerateMultipleHelloMessage(names)
+
+	// then
+	for name, message := range messages {
+		expected := regexp.MustCompile(`\b` + name + `\b`)
+
+		if !expected.MatchString(message) || err != nil {
+			t.Fatalf("GenerateMultipleHelloMessage(%s) failed with error '%s'", names, err)
+		}
+	}
+}
