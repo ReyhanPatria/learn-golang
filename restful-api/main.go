@@ -18,4 +18,11 @@ func getProducts(c *gin.Context) {
 }
 
 func main() {
+	router := gin.Default()
+
+	router.GET("/products", func(c *gin.Context) {
+		getProducts(c)
+	})
+
+	router.Run("localhost:8080")
 }
