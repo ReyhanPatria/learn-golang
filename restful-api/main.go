@@ -15,6 +15,7 @@ var products = []model.Product{
 }
 
 func getProducts(c *gin.Context) {
+	// Return products array in a indented json
 	c.IndentedJSON(http.StatusOK, products)
 }
 
@@ -45,14 +46,19 @@ func getProductById(c *gin.Context) {
 func insertProduct(c *gin.Context) {
 	var newProduct model.Product
 
+	// Try to bind request body to a new product variable
 	err := c.BindJSON(&newProduct)
 
+	// If failed to bind, then response with 400 bad request
 	if err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
+	// Insert new product to products array
 	products = append(products, newProduct)
+
+	// Returned the newly inserted product
 	c.IndentedJSON(http.StatusOK, newProduct)
 }
 
