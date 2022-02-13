@@ -42,10 +42,26 @@ func getProductById(c *gin.Context) {
 	c.AbortWithStatus(http.StatusNotFound)
 }
 
+func insertProduct(c *gin.Context) {
+	var newProduct model.Product
+
+	err := c.BindJSON(&newProduct)
+
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	products = append(products, newProduct)
+	c.IndentedJSON(http.StatusOK, newProduct)
+}
+
 func main() {
 	router := gin.Default()
 
 	router.GET("/products", getProducts)
+	router.POST("/product", insertProduct)
+
 	router.GET("/product/:id", getProductById)
 
 	router.Run("localhost:8080")
