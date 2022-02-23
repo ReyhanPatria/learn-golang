@@ -33,6 +33,15 @@ func isRequestMethodValid(w http.ResponseWriter, actual string, expected ...stri
 	return false
 }
 
+func loadPage(w http.ResponseWriter, title string) (*model.Page, error) {
+	page, err := model.LoadPage(title)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return nil, err
+	}
+	return page, nil
+}
+
 // Index function handler
 func GetIndexView(w http.ResponseWriter, r *http.Request) {
 	// Handle if http method is not GET
@@ -41,16 +50,9 @@ func GetIndexView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get page file
-	page, err := model.LoadPage("index")
-
-	// Handle if page file doesn't exist
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
+	if page, err := loadPage(w, "index"); err == nil {
+		renderTemplate(w, "wiki", page)
 	}
-
-	// Create html template for page
-	renderTemplate(w, "wiki", page)
 }
 
 // Wiki view function handler
@@ -64,13 +66,7 @@ func GetWikiView(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/view/"):]
 
 	// Get Page
-	page, err := model.LoadPage(title)
-
-	// Handle if page file doesn't exist
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
+	if page, err := loadPage(w, title); err == nil {
+		renderTemplate(w, "wiki", page)
 	}
-
-	renderTemplate(w, "wiki", page)
 }
