@@ -7,6 +7,7 @@ import (
 
 func main() {
 	http.HandleFunc("/", handler.GetIndexView)
+	http.HandleFunc("/view/", handler.GetWikiView)
 
 	http.ListenAndServe("localhost:8080", nil)
 }
