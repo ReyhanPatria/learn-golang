@@ -23,11 +23,20 @@ func renderTemplate(w http.ResponseWriter, templateName string, page *model.Page
 	return t.Execute(w, page)
 }
 
+func isRequestMethodValid(w http.ResponseWriter, actual string, expected ...string) bool {
+	for _, method := range expected {
+		if method == actual {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return true
+		}
+	}
+	return false
+}
+
 // Index function handler
 func GetIndexView(w http.ResponseWriter, r *http.Request) {
 	// Handle if http method is not GET
-	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
+	if !isRequestMethodValid(w, r.Method, http.MethodGet) {
 		return
 	}
 
@@ -47,8 +56,7 @@ func GetIndexView(w http.ResponseWriter, r *http.Request) {
 // Wiki view function handler
 func GetWikiView(w http.ResponseWriter, r *http.Request) {
 	// Check if http method is GET
-	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
+	if !isRequestMethodValid(w, r.Method, http.MethodGet) {
 		return
 	}
 
