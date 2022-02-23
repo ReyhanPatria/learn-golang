@@ -8,6 +8,21 @@ import (
 
 var templatePrefix string = "./page/templates/"
 
+func renderTemplate(w http.ResponseWriter, templateName string, page *model.Page) error {
+	// Create html template for page
+	templateFilename := templatePrefix + templateName + ".html"
+	t, err := template.ParseFiles(templateFilename)
+
+	// Handle if template is not found
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return err
+	}
+
+	// Apply Page to html template
+	return t.Execute(w, page)
+}
+
 // Index function handler
 func GetIndexView(w http.ResponseWriter, r *http.Request) {
 	// Handle if http method is not GET
@@ -26,17 +41,7 @@ func GetIndexView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create html template for page
-	templateFilename := templatePrefix + "wiki.html"
-	t, err := template.ParseFiles(templateFilename)
-
-	// Handle if template is not found
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	// Apply Page to html template
-	t.Execute(w, page)
+	renderTemplate(w, "wiki", page)
 }
 
 // Wiki view function handler
@@ -59,16 +64,5 @@ func GetWikiView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create html template for page
-	templateFilename := templatePrefix + "wiki.html"
-	t, err := template.ParseFiles(templateFilename)
-
-	// Handle if template is not found
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	// Apply Page to html template
-	t.Execute(w, page)
+	renderTemplate(w, "wiki", page)
 }
