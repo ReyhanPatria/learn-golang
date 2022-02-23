@@ -25,3 +25,21 @@ func GetIndexView(w http.ResponseWriter, r *http.Request) {
 	// Write respnse body
 	fmt.Fprintf(w, "<h1>%s</h1><p>%s</p>", page.Title, page.Body)
 }
+
+func GetWikiView(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	title := r.URL.Path[len("/view/"):]
+
+	page, err := model.LoadPage(title)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	fmt.Fprintf(w, "<h1>%s</h1><p>%s</p>", page.Title, page.Body)
+}
