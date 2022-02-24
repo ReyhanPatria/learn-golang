@@ -8,42 +8,57 @@ import (
 
 var templatePrefix string = "./page/templates/"
 
-// Index function handler
-func GetIndexView(w http.ResponseWriter, r *http.Request) {
-	// Handle if http method is not GET
-	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-
-	// Get page file
-	page, err := model.LoadPage("index")
-
-	// Handle if page file doesn't exist
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
+func renderTemplate(w http.ResponseWriter, templateName string, page *model.Page) error {
 	// Create html template for page
-	templateFilename := templatePrefix + "wiki.html"
+	templateFilename := templatePrefix + templateName + ".html"
 	t, err := template.ParseFiles(templateFilename)
 
 	// Handle if template is not found
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		return
+		return err
 	}
 
 	// Apply Page to html template
-	t.Execute(w, page)
+	return t.Execute(w, page)
+}
+
+func isRequestMethodValid(w http.ResponseWriter, actual string, expected ...string) bool {
+	for _, method := range expected {
+		if method == actual {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return true
+		}
+	}
+	return false
+}
+
+func loadPage(w http.ResponseWriter, title string) (*model.Page, error) {
+	page, err := model.LoadPage(title)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return nil, err
+	}
+	return page, nil
+}
+
+// Index function handler
+func GetIndexView(w http.ResponseWriter, r *http.Request) {
+	// Handle if http method is not GET
+	if !isRequestMethodValid(w, r.Method, http.MethodGet) {
+		return
+	}
+
+	// Get page file
+	if page, err := loadPage(w, "index"); err == nil {
+		renderTemplate(w, "wiki", page)
+	}
 }
 
 // Wiki view function handler
 func GetWikiView(w http.ResponseWriter, r *http.Request) {
 	// Check if http method is GET
-	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
+	if !isRequestMethodValid(w, r.Method, http.MethodGet) {
 		return
 	}
 
@@ -51,24 +66,7 @@ func GetWikiView(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/view/"):]
 
 	// Get Page
-	page, err := model.LoadPage(title)
-
-	// Handle if page file doesn't exist
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
+	if page, err := loadPage(w, title); err == nil {
+		renderTemplate(w, "wiki", page)
 	}
-
-	// Create html template for page
-	templateFilename := templatePrefix + "wiki.html"
-	t, err := template.ParseFiles(templateFilename)
-
-	// Handle if template is not found
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	// Apply Page to html template
-	t.Execute(w, page)
 }
