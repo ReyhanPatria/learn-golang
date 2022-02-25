@@ -51,12 +51,12 @@ func GetIndexView(w http.ResponseWriter, r *http.Request) {
 
 	// Get page file
 	if page, err := loadPage(w, "index"); err == nil {
-		renderTemplate(w, "wiki", page)
+		renderTemplate(w, "blog", page)
 	}
 }
 
-// Wiki view function handler
-func GetWikiView(w http.ResponseWriter, r *http.Request) {
+// Blog view function handler
+func GetBlogView(w http.ResponseWriter, r *http.Request) {
 	// Check if http method is GET
 	if !isRequestMethodValid(w, r.Method, http.MethodGet) {
 		return
@@ -67,6 +67,21 @@ func GetWikiView(w http.ResponseWriter, r *http.Request) {
 
 	// Get Page
 	if page, err := loadPage(w, title); err == nil {
-		renderTemplate(w, "wiki", page)
+		renderTemplate(w, "blog", page)
+	}
+}
+
+func GetEditView(w http.ResponseWriter, r *http.Request) {
+	// Check if http method is GET
+	if !isRequestMethodValid(w, http.MethodGet, http.MethodGet) {
+		return
+	}
+
+	// Get page title
+	title := r.URL.Path[len("/edit/"):]
+
+	// Get page
+	if page, err := model.LoadPage(title); err == nil {
+		renderTemplate(w, "edit", page)
 	}
 }
